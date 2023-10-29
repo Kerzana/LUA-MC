@@ -1,0 +1,80 @@
+interface = peripheral.wrap("basic_interface_0")
+monitor = peripheral.wrap("back")
+
+function dial(address)
+   local addressLength = #address
+   local start = interface.getChevronsEngaged() + 1
+   
+    for chevron = start,addressLength,1
+    do
+    
+        local symbol = address[chevron]
+        
+        if chevron % 2 == 0 then
+            interface.rotateClockwise(symbol)
+        else
+            interface.rotateAntiClockwise(symbol)
+        end
+        
+        while(not interface.isCurrentSymbol(symbol))
+        do
+            monitor.setCursorPos(1,1)
+            monitor.write("Feedback",interface.getRecentFeedback())
+            sleep(0)
+        end
+        
+        sleep(1)
+        monitor.setCursorPos(chevron + 1,1)
+        monitor.write(interface.raiseChevron())
+        print("Code",interface.raiseChevron())
+        sleep(1)
+        monitor.setCursorPos(chevron + 2,1)
+        print("Code",interface.lowerChevron())
+        sleep(1)
+    end
+    print("Addresse : " + address)
+    monitor.setCursorPos(#address + 1,1)
+    monitor.write("Addresse : " + address)
+end
+
+abydosAddress = {26,6,14,31,11,29,0}
+chulakAddress = {8,1,22,14,36,19,0}
+lanteaAddress = {18,20,1,15,14,7,19,0}
+
+monitor.clear()
+monitor.setCursorPos(1,1)
+monitor.write("Avaiting input:")
+monitor.setCursorPos(2,1)
+monitor.write("1 = Abydos")
+monitor.setCursorPos(3,1)
+monitor.write("2 = Chulak")
+monitor.setCursorPos(4,1)
+monitor.write("3 = Lantea")
+monitor.setCursorPos(5,1)
+monitor.write("4 = Addresse Manuelle Requise ! \{a,b,c,d,e,f,g,h\}")
+input = tonumber(io.read())
+
+if input == 1 then
+    monitor.clear()
+    monitor.setCursorPos(1,1)
+    monitor.write("Abydos Selectionnez, Ouverture en cours...")
+    dial(abydosAddress)
+elseif input == 2 then
+    monitor.clear()
+    monitor.setCursorPos(1,1)
+    monitor.write("Chulak Selectionnez, Ouverture en cours...")
+    dial(chulakAddress)
+elseif input == 3 then
+    monitor.clear()
+    monitor.setCursorPos(1,1)
+    monitor.write("Lantea Selectionnez, Ouverture en cours...")
+    dial(lanteaAddress)
+elseif input == 4 then
+    monitor.clear()
+    monitor.setCursorPos(1,1)
+    monitor.write("Entrer manuellement l'addresse sous forme :")
+    monitor.setCursorPos(2,1)
+    monitor.write("\{a,b,c,d,e,f,g,h\}")
+    intputAddress = io.read()
+    dial(intputAddress)
+end
